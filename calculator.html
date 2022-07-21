@@ -1,0 +1,180 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    body{
+        width: 100%;
+        height: 700px;
+        background-image: url('../static/kitchen_fade.jpg');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .btn-container{
+    margin-top: 30px;
+    text-align: center;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 8px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 10px;
+        z-index: 9;
+    }
+    
+    .button1 {
+        background-color: white; 
+        color: black; 
+        border: none;
+    }
+    
+    .button1:hover {
+        background-color: #f8a81d;
+        color: white;
+    }
+    .parallax{
+        width: 100%;
+        height: 600px;
+        background-position: center;
+        background-size: cover;
+        background-image: url('../static/Archetype_back_fade.jpg');
+        background-attachment: fixed;
+    }
+    
+    .text-block{
+        width:100%;
+        opacity:0.95;
+        margin-top: 285px;
+        padding-left: 225px;
+        padding-right: 225px;
+        padding-bottom: 300px;
+    }
+
+    .myDiv{
+        display:none;
+    } 
+
+</style>
+
+<form action="{{ url_for('calculator_output')}}", method="post">
+    <div class="text-block">
+        <div class="jumbotron"style="padding-left: 10%; padding-right: 10%">
+
+            <h1 class="display-4" style="color:rgb(0,163,175)">Heat Loss and Heat pump Switchover temperature Calculator</h1>
+            <p class="lead">This calculator uses current gas consumption information to estimate the heat loss of your home and suggests a heat pump switchover temperature.
+                This tool should just be used as a basic guide, please consult a professional to properly size heat pump equipment to your home before installation.
+            </p>
+            <hr class="my-4">
+
+            <p class="lead">What is the annual gas usage for your household?
+
+            <div class="form-row">
+                <div class="col">
+                    <label style="width:40%">Enter your annual gas use for 2021 in m<sup>3</sup>:</label>
+                    <input style="width:30%" type="number" class="form-control" name="gasuse_total" id="gasuse_total" required/>
+                    <small class="form-text text-muted">Information available on your <a href="https://www.enbridgegas.com/residential/my-account">
+                        Enbridge</a> account</small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">What is the annual gas use for direct hot water for your household?</p> 
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <label style="width:50%">Enter your annual gas use in 2021 for hot water in m<sup>3</sup>: </label>
+                    <input style="width:30%" type="number" class="form-control" name="dhw_annual" id="dhw_annual" min="0" required/>
+                    <small class="form-text text-muted">Calculate this value by adding up your summer gas bills (~ May to August or whenever your furnace is typically not in use)</small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">At what outdoor temperature do you turn off your furnace?</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <label style="width:50%">Enter a temperature in <sup>o</sup>C:</label>
+                    <input style="width:30%" type="number" class="form-control" name="balance_point" id="balance_point" min="0" required/>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">What is the efficiency of your furnace?</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <label style="width:50%">Enter a value less than 1:</label>
+                    <input style="width:30%" type="number" class="form-control" name="furnace_eff" id="furnace_eff" min="0" max="1.0" step="0.01" required/>
+                    <small class="form-text text-muted">(ex. 0.95 for 95% efficiency)</small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">Input a derate value for your heating equipment ("fudge factor")</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <label style="width:50%">Enter a value less than 1:</label>
+                    <input style="width:30%" type="number" class="form-control" name="derate" id="derate" min="0" max="1.0" step="0.01" value="0.2" required/>
+                    <small class="form-text text-muted">(ex. 0.1 for 10% derate)</small>
+                </div>
+            </div>
+            <br>
+            <p class="lead">Which city are you located in?</p>
+            <label>Select a city from the list below:<br> (If your city is not listed, select the closest available option)</label>
+            <select class="form-control" type="text" name="location" id="location" style="width:30%" required>
+                <option value="">Select a City</option>
+                <option value="london">London</option>
+                <option value="niagara">Niagara Falls</option>
+                <option value="toronto">Toronto</option>
+            </select>
+            <br>
+
+            <p class="lead">Select a heat pump size for your home</p>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="heatpumpsize" id="heatpumpsize" value="1.5" required>
+                <label class="form-check-label" for="heatpumpsize">
+                    1.5 ton / 18 000 BTU
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="heatpumpsize" id="heatpumpsize" value="2">
+                <label class="form-check-label" for="heatpumpsize">
+                    2 ton / 24 000 BTU
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="heatpumpsize" id="heatpumpsize" value="3">
+                <label class="form-check-label" for="heatpumpsize">
+                    3 ton / 36 000 BTU
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="heatpumpsize" id="heatpumpsize" value="4">
+                <label class="form-check-label" for="heatpumpsize">
+                    4 ton / 48 000 BTU
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="heatpumpsize" id="heatpumpsize" value="5">
+                <label class="form-check-label" for="heatpumpsize">
+                    5 ton / 60 000 BTU
+                </label>
+            </div>
+            <div class="btn-container">
+                <button class="button button1" type="submit" style="margin-right:30px;">Calculate my Heat Loss!</button>
+            </div>
+            <hr class="my-4">
+            {% endblock content %}
+        </div>
+        
+    </div>
+</form>
