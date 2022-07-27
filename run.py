@@ -57,7 +57,7 @@ def calculator_output():
         x = x_plot
         y = m*x+b
         
-        fig,ax = plt.subplots(figsize=(10,6))
+        fig,ax = plt.subplots(figsize=(10,7))
         ax.plot(x,y,color=step_blue, label='heat loss')
 
         switchtemp = -99      
