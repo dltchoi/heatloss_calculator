@@ -1,0 +1,15 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<link rel="stylesheet" href="./static/home.css">
+<body>
+  <div class="main">
+    <h1 class="display-4" style="font-weight:400; font-size: 50px"> Size a Heat Pump for an Ontario Home</h1>
+  </div>
+  <div class="box">
+    <a href="{{url_for('calculator')}}">
+    <button class="button button1">Start Sizing</button></a>
+  </div>
+</body>
+
+{% endblock content %}
