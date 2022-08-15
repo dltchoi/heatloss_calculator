@@ -426,7 +426,7 @@ def heatloss_estimate (gasuse_total, dhw_monthly, balance_point, furnace_eff, hl
     weatherdata['heatloss'] = m * weatherdata.temperature + b
 
     # create dataframe for plotting heat load distribution histogram
-    bin_midpoints = np.arange(-29.5,balance_point,1)
+    bin_midpoints = np.arange(-30,balance_point,1)
     hours = []
     load = []
     for mid_point in bin_midpoints:
