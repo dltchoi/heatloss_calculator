@@ -1,0 +1,101 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    body{
+        width: 100%;
+        height: 700px;
+        background-image: url('../static/kitchen_fade.jpg');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .btn-container{
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 8px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 10px;
+        z-index: 9;
+    }
+    
+    .button1 {
+        background-color: white; 
+        color: black; 
+        border: none;
+    }
+    
+    .button1:hover {
+        background-color: #f8a81d;
+        color: white;
+    }
+    
+    .text-block{
+        width:100%;
+        opacity:0.95;
+        margin-top: 285px;
+        padding-left: 225px;
+        padding-right: 225px;
+        padding-bottom: 300px;
+    }
+
+    .myDiv{
+        display:none;
+    } 
+
+    table {
+      font-family: arial, sans-serif;
+      font-size: small;
+      border-collapse: collapse;
+      width: 60%;
+      margin-left: 20%;
+    
+    }
+
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+</style>
+
+<div class="text-block">
+    <div class="jumbotron">
+      <div class="container" style="padding-left: 4%; padding-right: 4%">
+        <h1 class="display-4" style="color:rgb(0,163,175)">Contact</h1>
+        <hr class="my-4">
+        
+        <p class="lead"> For more information about STEP’s ASHP Campaign, this calculator, or services offered by STEP to support the implementation of this approach in residential homes, please contact us via e-mail.
+        </p>
+        <div class="row">
+          <div class="col">
+            <p class="lead">Address:</p>
+            <p class="lead">101 Exchange Ave </br>Concord, ON  </br>L4K 5R6 </p>
+          </div>
+          <div class="col">
+            <p class="lead">E-mail:</p>
+            <p class="lead">step@trca.ca</p>
+          </div>
+        </div>
+        
+        <hr class="my-4">
+  
+        {% endblock content %}
+        </div>
+    </div>

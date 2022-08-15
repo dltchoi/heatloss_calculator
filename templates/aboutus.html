@@ -1,0 +1,106 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    body{
+        width: 100%;
+        height: 700px;
+        background-image: url('../static/kitchen_fade.jpg');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .btn-container{
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 8px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 10px;
+        z-index: 9;
+    }
+    
+    .button1 {
+        background-color: white; 
+        color: black; 
+        border: none;
+    }
+    
+    .button1:hover {
+        background-color: #f8a81d;
+        color: white;
+    }
+    
+    .text-block{
+        width:100%;
+        opacity:0.95;
+        margin-top: 285px;
+        padding-left: 225px;
+        padding-right: 225px;
+        padding-bottom: 300px;
+    }
+
+    .myDiv{
+        display:none;
+    } 
+
+    table {
+      font-family: arial, sans-serif;
+      font-size: small;
+      border-collapse: collapse;
+      width: 60%;
+      margin-left: 20%;
+    
+    }
+
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+</style>
+
+<div class="text-block">
+    <div class="jumbotron">
+      <div class="container" style="padding-left: 4%; padding-right: 4%">
+        <h1 class="display-4" style="color:rgb(0,163,175)">About Us</h1>
+        <hr class="my-4">
+
+        <p class='lead'>The Sustainable Technologies Evaluation Program (STEP) is a multi-agency initiative developed to support broader implementation of sustainable technologies and practices within a Canadian context.  STEP works to achieve this overarching objective by:</p>
+            <ul class='lead'>
+              <li> Carrying out research, monitoring and evaluation of clean water and low carbon technologies; </li>
+              <li>Assessing technology implementation barriers and opportunities;</li>
+              <li>Developing supporting tools, guidelines and policies;</li>
+              <li>Delivering education and training programs;</li>
+              <li>Advocating for effective sustainable technologies; and</li>
+              <li>Collaborating with academic and industry partners through our Living Labs and other initiatives.</li>
+            </ul>
+
+            <p class='lead'>
+            Technologies evaluated under STEP are not limited to physical devices or products; they may also include preventative measures, implementation protocols, alternative urban site designs, and other innovative practices that help create more sustainable and liveable communities.
+            </p>
+
+            <p class='lead'> STEP also acts as a third party verifier for the Environmental Technology Verification (ETV) process.  ETV provides independent evaluation of new technologies in order to validate environmental claims so that users, developers, regulators, and other parties can make informed decisions about purchasing, applying and regulating innovative technologies.
+            </p>
+
+        <hr class="my-4">
+  
+        {% endblock content %}
+        </div>
+    </div>
+    

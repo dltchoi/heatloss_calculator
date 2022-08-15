@@ -1,0 +1,139 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    body{
+        width: 100%;
+        height: 700px;
+        background-image: url('../static/kitchen_fade.jpg');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .btn-container{
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 8px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 10px;
+        z-index: 9;
+    }
+    
+    .button1 {
+        background-color: white; 
+        color: black; 
+        border: none;
+    }
+    
+    .button1:hover {
+        background-color: #f8a81d;
+        color: white;
+    }
+    
+    .text-block{
+        width:100%;
+        opacity:0.95;
+        margin-top: 285px;
+        padding-left: 225px;
+        padding-right: 225px;
+        padding-bottom: 300px;
+    }
+
+    .myDiv{
+        display:none;
+    } 
+
+    table {
+      font-family: arial, sans-serif;
+      font-size: small;
+      border-collapse: collapse;
+      width: 60%;
+      margin-left: 20%;
+    
+    }
+
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+</style>
+
+<SCRIPT SRC='https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'></SCRIPT>
+<SCRIPT>MathJax.Hub.Config({ tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}})</SCRIPT>
+
+<div class="text-block">
+    <div class="jumbotron">
+      <div class="container" style="padding-left: 4%; padding-right: 4%">
+        <h1 class="display-4" style="color:rgb(0,163,175)">Methodology</h1>
+        <hr class="my-4">
+
+        <p class="lead">Calculator Overview</p>
+        <p>
+            This calculator estimates building heatloss based on the user inputs of total annual gas usage, direct hot water usage, existing furnace efficiency, building balance point and location.
+            The user can then select from several standard heat pump sizes (single-stage) or input performance parameters of their preferred heat pump model to estimate the switchover temperature and fraction of their annual heating that can be provided by the heat pump.
+            <br><br>
+            The following steps outline how the calculator estimates building heat loss from the user inputs:
+            <ul>
+                <li>Building heat loss and outdoor temperature share a linear relationship,
+                    $$ y = mx + b \tag{1}$$
+                    where x is outdoor temperature, y is heat loss, m is the slope of the plot and b is the y-intercept.</li>
+                <li>The building balance point is the outdoor temperature at which active heating is no longer required, at this temperature the heat loss is 0.</li>
+                <li>Annual gas usage for space heating is calculated by subtracting monthly direct hot water/gas used for other purposes from total annual gas use.</li>
+                <li>To solve for m, two points are required: (x<sub>1</sub>, y<sub>1</sub>) and (x<sub>2</sub>, y<sub>2</sub>)
+                    $$ m = {y_{2}-y_{1} \over x_{2}-x_{1}}\tag{2}$$
+                    The first point is the balance point temperature (x<sub>1</sub>) where heat loss is 0 (y<sub>1</sub>), and the second point is unknown.</li>
+                <li>A guess-and-check method is used to find a second point to solve for m:</li>
+                <ul>
+                    <li>Using historical hourly temperature data of the selected location, a guess is made of the heat loss value (y<sub>2</sub>) for an arbitrary temperature recording (x<sub>2</sub>), then a first guess for m is calculated using this point. </li>
+                    <li>With the first guess of m, a heat loss value is calculated for each historical temperature recording for the year using equation (1).</li>
+                    <li>These heat loss values are then summed for the year and the equivalent gas use is solved for using conversion factors and the user's existing furnace efficiency.</li>
+                    <li>The total annual gas use calculated from the first guess is compared with the user's annual gas consumption for space heating to evaluate the next heat loss value guess. 
+                        If the calculated annual gas use is higher than the user input, the initial heat loss guess needs to be reduced; if the calculated annual gas use is higher than the user input, the initial heat loss guess needs to be increased.
+                    <li>The process is repeated until the calculated annual gas use is equal to the user's annual gas consumption for space heating.</li>
+                </ul>
+                <li>Once m has been determined from the guess and check, b is calculated by rearranging equation (1).</li>
+                <li>The heat loss curve is then calculated with the determined m and b values.</li>
+                <li>Design heat loss is determined by using the design heating temperature for the location (x) in equation (1). </li>
+            </ul>
+            The heating load distribution is determined by the annual average of hourly historical weather data from 2017 to 2021 obtained from <a href="https://www.weatherstats.ca/"target="_blank">weatherstats.ca</a>.
+            For a furnace back-up scenario, the heat pump can provide full heating for outdoor temperatures above the switchover temperature and "switch" to the furnace below the switchover temperature.
+            For electric resistance back-up, the heat pump can provide full heating for outdoor temperatures above the switchover temperature as well as a portion of the heating below the switchover temperature down to its minimum operating temperature. 
+            The electric resistance system will top-up the remainder of the heating load required to provide a comfortable living space.
+        </p>
+        <br>
+        <p class="lead">User Considerations</p>
+        <p>
+            Considerations users should have in mind while using this calculator:
+            <ul>
+                <li>Estimates provided by this calculator are approximate values based on user inputs, please consult a professional before installing a heat pump.</li>
+                <li>There are various types and sizes of heat pumps available, this calculator provides size options of standard efficiency single-stage heat pumps (HSPF 9.0) which may not be the most optimal option for each case.</li>
+                <li>Cold-climate heat pumps have to ability to efficienctly heat in outdoor temperatures down to -25&deg;C and can cover a significant portion, if not all, of the required heating.</li>
+                <li>For maximum carbon reduction, high-efficiency and cold-climate heat pumps are the best options to reduce fuel consumption</li>
+            </ul>
+            Financial and energy savings will be included as part of a future calculator tool.
+        </p>
+        <br>
+        <p class="lead">Validation</p>
+       </div>
+        <hr class="my-4">
+  
+    {% endblock content %}
+    </div>
+</div>

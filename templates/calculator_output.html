@@ -1,0 +1,290 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    body{
+        width: 100%;
+        height: 700px;
+        background-image: url('../static/kitchen_fade.jpg');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .btn-container{
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 8px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 10px;
+        z-index: 9;
+    }
+    
+    .button1 {
+        background-color: white; 
+        color: black; 
+        border: none;
+    }
+    
+    .button1:hover {
+        background-color: #f8a81d;
+        color: white;
+    }
+    
+    .text-block{
+        width:100%;
+        opacity:0.95;
+        margin-top: 285px;
+        padding-left: 225px;
+        padding-right: 225px;
+        padding-bottom: 300px;
+    }
+
+    .myDiv{
+        display:none;
+    } 
+    
+</style>
+
+<div class="text-block">
+    <div class="jumbotron"style="padding-left: 8%; padding-right: 8%">
+
+        <h1 class="display-4" style="color:rgb(0,163,175); font-size: 50px;">Sizing Results</h1>
+        <p >Air-source heat pumps typically lose heating capacity as it gets colder outside because it becomes more difficult to “pump” heat. 
+          At the same time, the building heat loss increases as it gets colder outside.
+          For any given outdoor temperature, the heat pump capacity curve must be greater than the building heat loss if it is to be used as the only source of heating for the home. 
+          If the heat pump capacity is lower than the heat loss then it will not be able to maintain the indoor thermostat set-point on its own.<br><br>
+          The outdoor temperature where the heat loss curve for the home intersects the heat pump capacity curve is the lowest possible temperature where the heat pump can be used exclusively and still meet the home’s heating requirements. 
+          This sizing calculator estimates that intersection point.
+          If the back-up heating source is a furnace then, below that intersection, the heat pump must be turned off and the furnace used exclusively.
+          If the back-up heating source is electricity then it is possible for both the heat pump and electric heating coil to be used together with the electric coil “topping up” the temperature provided by the heat pump.
+        </p>
+        <hr class="my-4">
+      
+          <h5>Parameter Inputs</h5>
+
+          <div class="row">
+            <div class="col" align="left">
+              Total annual gas use of the home:
+            </div>
+            <div class="col">
+            <b>{{gasuse_total}} m<sup>3</sup></b>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col" align="left">
+                Annual gas usage for hot water (and other end uses):
+              </div>
+              <div class="col">
+                <b>{{dhw_annual}} m<sup>3</sup></b>
+              </div>
+          </div>
+
+          <div class="row">
+            <div class="col" align="left">
+              Annual gas usage for space heating:
+            </div>
+            <div class="col">
+            <b>{{gasuse_annual}} m<sup>3</sup></b>
+            </div>
+          </div>
+
+          <div class="row">
+              <div class="col" align="left">
+                Balance temperature:
+              </div>
+              <div class="col">
+                <b>{{balance_point}} &deg;C</b>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col" align="left">
+                Efficiency of existing furance:
+              </div>
+              <div class="col">
+                <b>{{furnace_eff}} %</b>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col" align="left">
+                Heat loss safety margin:
+              </div>
+              <div class="col">
+                <b>{{derate}} %</b>
+              </div>
+          </div>
+
+          <div class="row">
+              <div class="col" align="left">
+                Location:
+              </div>
+              <div class="col">
+                <b>{{location_name}}</b>
+              </div>
+          </div>
+
+          <div class="row">
+            <div class="col" align="left">
+              Heat pump size(s):
+            </div>
+            <div class="col">
+              {% for item in heatpumpsize %}
+                <b> {{ item }} ton<br> </b>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col" align="left">
+              Heat pump safety margin:
+            </div>
+            <div class="col">
+              <b>{{hp_derate}} %</b>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col" align="left">
+              Custom heat pump capacity data - curve 1:
+            </div>
+            <div class="col">
+              {% for cap, temp in curve1 %}
+                <b>{{cap}} kBTU/hr at {{temp}} &deg;C</b><br>
+              {% endfor %}
+              {% for derate in derate_c1 %} 
+                <b>{{derate}}% safety margin</b>
+              {% endfor %} 
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col" align="left">
+              Custom heat pump capacity data - curve 2:
+            </div>
+            <div class="col">
+              {% for cap, temp in curve2 %}
+                <b>{{cap}} kBTU/hr at {{temp}} &deg;C</b><br>
+              {% endfor %}
+              {% for derate in derate_c2 %}  
+                <b>{{derate}}% safety margin</b>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col" align="left">
+              Custom heat pump capacity data - curve 3:
+            </div>
+            <div class="col">
+              {% for cap, temp in curve3 %}
+                <b>{{cap}} kBTU/hr at {{temp}} &deg;C</b><br>
+              {% endfor %}
+              {% for derate in derate_c3 %} 
+                <b>{{derate}}% safety margin</b>
+              {% endfor %}
+            </div>
+          </div>
+
+          <hr class="my-4">
+          <h5>Results</h5>
+    
+          <div class="row">
+            <div class="col" align="left">
+              Heat loss at design temperature:
+            </div>
+            <div class="col">
+              <b>{{heatloss_design}} kBTU/hr at {{dtemp}} &deg;C</b>
+            </div>
+          </div>
+          <br>
+          <img src={{heatloss_url}} alt="" style="display: block; margin-left: auto; margin-right: auto; width: 65%;">
+          <br><br>
+          {% for item,size,frac,efrac in ziplist %}
+          <div class="row justify-content-center">
+            <div class="col-4" align="right">
+              <b>For a {{ size }} ton heat pump<br></b>
+              Back-up is required below:<br>
+              For furnace back-up:<br>
+              For electric resistance back-up: <br>
+            </div>
+            <div class="col-md-auto">      
+              <b><br>{{ item }} &deg;C <br></b>
+              {{ size }} ton heat pump can provide <b>{{ frac }}%</b> of the annual heating load<br>
+              {{ size }} ton heat pump can provide <b>{{ efrac }}%</b> of the annual heating load<br><br>
+            </div>
+          </div>
+          {% endfor %}
+          
+          <div class="row justify-content-center">
+            <div class="col-4" align="right">
+              {% for switch,frac,efrac in curve1_result %}
+              <b><br>For custom curve 1</b><br> 
+              Back-up is required below:<br>
+              For furnace back-up:<br>
+              For electric resistance back-up: <br>
+            </div>
+            <div class="col-md-auto">
+              <b><br><br>{{switch}} &deg;C<br></b>
+              this heat pump can provide <b>{{ frac }}%</b> of the annual heating load<br>
+              this heat pump can provide <b>{{ efrac }}%</b> of the annual heating load<br>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <div class="row justify-content-center">
+            <div class="col-4" align="right">
+              {% for switch,frac,efrac in curve2_result %}
+              <b><br>For custom curve 2</b><br>
+              Back-up is required below:<br>
+              For furnace back-up:<br>
+              For electric resistance back-up:<br>
+            </div>
+            <div class="col-md-auto">
+                <b><br><br>{{switch}} &deg;C<br></b>
+                this heat pump can provide <b>{{ frac }}%</b> of the annual heating load<br>
+                this heat pump can provide <b>{{ efrac }}%</b> of the annual heating load<br>
+              {% endfor %}
+            </div>
+          </div>
+          
+          <div class="row justify-content-center">
+            <div class="col-4" align="right">
+              {% for switch,frac,efrac in curve3_result %}
+              <b><br>For custom curve 3</b><br>
+              Back-up is required below:<br>
+              For furnace back-up:<br>
+              For electric resistance back-up:<br>
+            </div>
+            <div class="col-md-auto">
+                <b><br><br>{{switch}} &deg;C<br></b>
+                this heat pump can provide <b>{{ frac }}%</b> of the annual heating load<br>
+                this heat pump can provide <b>{{ efrac }}%</b> of the annual heating load<br>
+              {% endfor %}
+            </div>
+          </div>
+          <br>
+          <img src={{heatdist_url}} alt="" style="display: block; margin-left: auto; margin-right: auto; width: 65%;">
+
+        <hr class="my-4">
+        <p style="font-size:smaller">Disclaimer: This calculator does not replace a CSA F280 heat loss calculation for a home. The calculator’s sole purpose is to help estimate the relative impacts of different heat pump sizes on the annual heating load. 
+          It is for educational purposes only and does not replace the expertise of a knowledgeable installer. There may be other considerations, like the existing ductwork, that further constrain the heat pump size. 
+          Individuals may use the calculator at their own risk and TRCA shall not be held responsible for improper use of the calculator. 
+          The sizing algorithm and associated programming code is discussed <a href="{{ url_for('methodology') }}"> here</a>.
+        </p>
+        <hr class="my-4">    
+        {% endblock content %} 
+    </div> 
+</div>

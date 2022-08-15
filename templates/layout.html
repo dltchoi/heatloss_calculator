@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+        <title>STEP Heat loss and Heat Pump Sizing Estimator</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+        <link rel = "stylesheet" href = "Main.css">
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+    <style>
+
+
+        #logonav{
+        position: absolute;
+        top: 20px;
+        margin-left: 25px;
+        color: white;
+        display: block;
+        justify-content: center;
+        align-items: center;
+        
+        }
+
+        .navbar-text{
+            margin-left: -10px;
+            overflow: visible;
+        }
+
+        .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        background-color: #111;
+        overflow-x: hidden;
+        transition: 0.7s ease;
+        padding-top: 60px;
+        -ms-overflow-style: none;  /* Internet Explorer 10+ */
+        scrollbar-width: none;  /* Firefox */
+        }
+
+        .sidenav::-webkit-scrollbar { 
+        display: none;  /* Safari and Chrome */
+        }
+
+        .sidenav a, .dropdown-btn {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        background-color: none;
+        color: #818181;
+        display: block;
+        transition: 0.3s;
+        }
+        
+        .sidenav a:hover, .dropdown-btn:hover {
+            color: #f8a81d;
+        }
+        
+        .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+        }
+
+        .dropdown-container {
+            background-color: #262626;
+            padding-left: 25px;
+            display: none;
+            transition: transform 3.0s ease-in-out;
+        }
+
+        @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+        }
+    </style>
+</head>
+<body>
+    
+    <nav>
+        <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a class="nav-link" href="{{ url_for('home')}}">Home<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{{ url_for('aboutus')}}">About Us<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{{ url_for('methodology')}}">Methodology<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{{ url_for('calculator')}}">Calculator<span class="sr-only">(current)</span></a>
+        <a class="nav-link" href="{{ url_for('contact')}}">Contact<span class="sr-only">(current)</span></a>
+        </div>
+        
+        <div id="logonav">
+            <span style="font-size:30px;cursor:pointer" onclick="openNav()"> 
+                <a class="navbar-brand"><img src="/static/STEPLogoIcon.png" height="55" width="70"> </a>
+                <h4 class="navbar-text">Menu</h4>
+            </span>
+        </div>
+    </nav>
+    <script>
+    function openNav() {
+      document.getElementById("mySidenav").style.width = "380px";
+    }
+    
+    function closeNav() {
+      document.getElementById("mySidenav").style.width = "0";
+    }
+
+
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    var i;
+
+    for (i = 0; i < dropdown.length; i++) {
+    dropdown[i].addEventListener("click", function() {
+        this.classList.toggle('active');
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+    });
+    }
+    </script>
+       
+
+{% block content %}
+{% endblock %}
+        <footer class="page-footer font-small blue">
+    <!-- Copyright -->
+            <div class="footer-copyright text-center py-3">
+            <p> © Copyright 2022 Toronto and Region Conservation Authority (TRCA) | All Rights Reserved
+            </br> Version: Beta
+            </p>
+            <p><a href="https://sustainabletechnologies.ca"><img src="/static/STEPLogo.png" style="width:18%"></img></a>
+            </p>
+            </div>
+        <!-- Copyright -->
+      </footer>
+    </body>
+</html>

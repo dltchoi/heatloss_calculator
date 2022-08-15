@@ -1,0 +1,343 @@
+{% extends "layout.html" %}
+{% block content %}
+<style>
+    body{
+        width: 100%;
+        height: 700px;
+        background-image: url('../static/kitchen_fade.jpg');
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+    }
+
+    .btn-container{
+        margin-top: 30px;
+        text-align: center;
+    }
+
+    .button {
+        border: none;
+        color: white;
+        padding: 8px 28px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 1.2em;
+        margin: 2px 1px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+        border-radius: 10px;
+        z-index: 9;
+    }
+    
+    .button1 {
+        background-color: white; 
+        color: black; 
+        border: none;
+    }
+    
+    .button1:hover {
+        background-color: #f8a81d;
+        color: white;
+    }
+    
+    .text-block{
+        width:100%;
+        opacity:0.95;
+        margin-top: 285px;
+        padding-left: 225px;
+        padding-right: 225px;
+        padding-bottom: 300px;
+    }
+
+    .myDiv{
+        display:none;
+    } 
+
+    table {
+      font-family: arial, sans-serif;
+      font-size: small;
+      border-collapse: collapse;
+      width: 60%;
+      margin-left: 20%;
+    
+    }
+
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: left;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+
+</style>
+
+<form action="{{ url_for('calculator_output')}}", method="post">
+    <div class="text-block">
+        <div class="jumbotron"style="padding-left: 10%; padding-right: 10%">
+
+            <h1 class="display-4" style="color:rgb(0,163,175); font-size: 50px">Heat Loss and Heat Pump Sizing Estimator</h1>
+            <p class="">Heat pumps are often installed with a back-up heating source. In a hybrid system, that heating source is often a gas furnace. In an all-electric system, it is an electric resistance heating coil. 
+                This calculator uses historical gas utility data to estimate the outdoor temperature where back-up heating would be required, and the total fraction of the annual heating load that can be met with the heat pump.
+            </p>
+            <hr class="my-4">
+
+            <p class="lead">Enter your annual gas use for 2021 in m<sup>3</sup>:</p>
+
+            <div class="form-row">
+                <div class="col">
+                    <input style="width:30%" type="number" class="form-control" name="gasuse_total" id="gasuse_total" required/>
+                    <small class="form-text text-muted">Information available on your <a href="https://www.enbridgegas.com/residential/my-account" target="_blank">
+                        Enbridge</a> account under “My Gas Use”, then “View Annual Statement for Taxes".</small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">Enter your average monthly gas use for domestic hot water (and other end uses such as a stove or dryer) in m<sup>3</sup>:</p> 
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <input style="width:30%" type="number" class="form-control" name="dhw_monthly" id="dhw_monthly" min="0" required/>
+                    <small class="form-text text-muted">This can be estimated as the annual monthly consumption from the summer gas bills.
+                        In this calculator, the gas consumption of a fireplace (if present) is treated equivalently as gas consumption from a furnace. 
+                        If a gas fireplace is present and frequently used, the predicted gas savings from using heat pump may be lower in practice.
+                    </small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">Enter the building balance point temperature (in &deg;C):</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <input style="width:30%" type="number" class="form-control" name="balance_point" id="balance_point" min="0" required/>
+                    <small class="form-text text-muted">This is the temperature above which the furnace is no longer required to maintain the indoor temperature set-point. 
+                        It may be between 12&deg;C and 16&deg;C for the average home. For highly insulated homes or townhomes, it may be lower.
+                        If the home has a smart thermostat, then there may be data available that can help estimate the balance point. It can also be estimated based on conversation with the homeowner. 
+                        If the balance point value is uncertain then it is best to assume different values and look at the impact on heat pump sizing.
+                    </small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">Enter the efficiency of the existing furnace used in 2021 (as a %):</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <input style="width:30%" type="number" class="form-control" name="furnace_eff" id="furnace_eff" min="0" step="0.5" max="100" required/>
+                    <small class="form-text text-muted">A high-efficiency furnace has an efficiency greater than 90% and up to 95%. 
+                        Note that mid-efficiency furnaces (80% to 90% efficient) were phased-out in Ontario as of 2009, but could still be in existing homes.</small>
+                </div>
+            </div>
+            <br>
+            <div class="form-input">
+                <p class="lead">Enter a safety margin for the heat loss estimate (as a %):</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <input style="width:30%" type="number" class="form-control" name="derate" id="derate" min="0" max="100" value="20" required/>
+                    <small class="form-text text-muted">The calculation algorithm determines the average heat loss, but heat loss can be greater overnight or in windy conditions (or lower during the day or without wind). 
+                        The safety margin takes adds a small correction to account for the fact that heat loss can be greater than the average in some conditions. A value of 20% or greater is recommended.</small>
+                </div>
+            </div>
+            <br>
+            <p class="lead">Select a city from the list below:</p>
+            <select class="form-control" type="text" name="location" id="location" style="width:30%" required>
+                <option value="">Select a City</option>
+                <option value="bancroft">Bancroft</option>
+                <option value="barrie">Barrie</option>
+                <option value="bigtroutlake">Big Trout Lake</option>
+                <option value="brampton">Brampton</option>
+                <option value="burlington">Burlington</option>
+                <option value="cobourg">Cobourg</option>
+                <option value="collingwood">Collingwood</option>
+                <option value="cornwall">Cornwall</option>
+                <option value="dryden">Dryden</option>
+                <option value="goderich">Goderich</option>
+                <option value="gravenhurst">Gravenhurst</option>
+                <option value="guelph">Guelph</option>
+                <option value="hamilton">Hamilton</option>
+                <option value="kapuskasing">Kapuskasing</option>
+                <option value="kenora">Kenora</option>
+                <option value="kingston">Kingston</option>
+                <option value="kitchener-waterloo">Kitchener-Waterloo</option>
+                <option value="london">London</option>
+                <option value="markham">Markham</option>
+                <option value="mississauga">Mississauga</option>
+                <option value="moosonee">Moosonee</option>
+                <option value="newmarket">Newmarket</option>
+                <option value="niagarafalls">Niagara Falls</option>
+                <option value="northbay">North Bay</option>
+                <option value="oakville">Oakville</option>
+                <option value="orangeville">Orangeville</option>
+                <option value="orillia">Orillia</option>
+                <option value="oshawa">Oshawa</option>
+                <option value="ottawa">Ottawa</option>
+                <option value="owensound">Owen Sound</option>
+                <option value="parrysound">Parry Sound</option>
+                <option value="peawanuck">Peawanuck</option>
+                <option value="pembroke">Pembroke</option>
+                <option value="peterborough">Peterborough</option>
+                <option value="pickering">Pickering</option>
+                <option value="picton">Picton</option>
+                <option value="redlake">Red Lake</option>
+                <option value="richmondhill">Richmond Hill</option>
+                <option value="sandylake">Sandy Lake</option>
+                <option value="saultstemarie">Sault Ste. Marie</option>
+                <option value="stratford">Stratford</option>
+                <option value="sudbury">Sudbury</option>
+                <option value="thunderbay">Thunder Bay</option>
+                <option value="timmins">Timmins</option>
+                <option value="toronto">Toronto</option>
+                <option value="trenton">Trenton</option>
+                <option value="vaughan">Vaughan</option>
+                <option value="whiteriver">White River</option>
+                <option value="wiarton">Wiarton</option>
+                <option value="windsor">Windsor</option>
+            </select>
+            <small class="form-text text-muted">If your city is not listed, select the closest available option</small>
+            <br>
+            <p class="lead">Select heat pump size(s) to evaluate:</p>
+            <div style="margin-left: 30px">
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize1" value="1.5">
+                    <label class="form-check-label" for="heatpumpsize1">
+                        1.5 ton / 18 000 BTU
+                    </label>
+                </div>
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize2" value="2">
+                    <label class="form-check-label" for="heatpumpsize2">
+                        2 ton / 24 000 BTU
+                    </label>
+                </div>
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize25" value="2.5">
+                    <label class="form-check-label" for="heatpumpsize25">
+                        2.5 ton / 30 000 BTU
+                    </label>
+                </div>
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize3" value="3">
+                    <label class="form-check-label" for="heatpumpsize3">
+                        3 ton / 36 000 BTU
+                    </label>
+                </div>
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize35" value="3.5">
+                    <label class="form-check-label" for="heatpumpsize35">
+                        3.5 ton / 42 000 BTU
+                    </label>
+                </div>
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize4" value="4">
+                    <label class="form-check-label" for="heatpumpsize4">
+                        4 ton / 48 000 BTU
+                    </label>
+                </div>
+                <div class="form-row">
+                    <input class="form-check-input" type="checkbox" name="heatpumpsize" id="heatpumpsize5" value="5">
+                    <label class="form-check-label" for="heatpumpsize5">
+                        5 ton / 60 000 BTU
+                    </label>
+                </div>
+            </div>
+            <small class="form-text text-muted">Select as many different heat pump sizes as desired and the calculator will compare the different sizes. 
+                Heat pump size is needed to estimate the heat pump capacity curve. 
+                For the size options provided, the calculator assumes the capacity curve of a standard efficiency single-stage heat pump. 
+                Standard efficiency is assumed as HSPF 9.0 whereas Energy Star units have an HSPF greater than 10. 
+                To evaluate options other than a standard efficiency heat pump, it is possible to input custom data points below.
+            </small>
+            <br>
+            <div class="form-input">
+                <p class="lead">Enter a safety margin for the heat pump capacity (as a %):</p>
+            </div>
+            <div class="form-row" >
+                <div class="col">
+                    <input style="width:30%" type="number" class="form-control" name="hp_derate" id="hp_derate" min="0" max="100" value="20" required/>
+                    <small class="form-text text-muted">This safety margin adds a small correction to account for the defrost and cycling of the heat pump (cycling is only an issue with single- and two-stage heat pumps). 
+                        10% or more is recommended if considering variable speed equipment and 20% or more is recommended if considering single- or two-stage equipment.</small>
+                </div>
+            </div>
+            <br>
+            <p class="lead">(Optional) Input custom heat pump capacity data:</p>
+            <p><b>Curve 1:</b></p>
+            <div class="form-row">
+                <div class="col">
+                    <label>Capacity at -8.3&deg;C (17&deg;F)<br>in kBTU/hr:</label>
+                    <input style="width:80%" type="number" class="form-control" name="heatpumpcap_17_c1" id="heatpumpcap_17_c1" min="0" max="100" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label>Capacity at 8.3&deg;C (47&deg;F)<br>in kBTU/hr:</label>
+                    <input style="width:80%" type="number" class="form-control" name="heatpumpcap_47_c1" id="heatpumpcap_47_c1" min="0" max="100" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label>Minimum operating <br>temperature in &deg;C:</label>
+                    <input style="width:80%" type="number" class="form-control" name="mintemp_c1" id="mintemp_c1" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label><br>Safety margin as a %:</label>
+                    <input style="width:80%" type="number" class="form-control" name="derate_c1" id="derate_c1" min="0" max="100" value="0"/>
+                </div>
+            </div>
+            <br>
+            <p><b>Curve 2:</b></p>
+            <div class="form-row">
+                <div class="col">
+                    <label>Capacity at -8.3&deg;C (17&deg;F)<br>in kBTU/hr:</label>
+                    <input style="width:80%" type="number" class="form-control" name="heatpumpcap_17_c2" id="heatpumpcap_17_c2" min="0" max="100" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label>Capacity at 8.3&deg;C (47&deg;F)<br>in kBTU/hr:</label>
+                    <input style="width:80%" type="number" class="form-control" name="heatpumpcap_47_c2" id="heatpumpcap_47_c2" min="0" max="100" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label>Minimum operating <br>temperature in &deg;C:</label>
+                    <input style="width:80%" type="number" class="form-control" name="mintemp_c2" id="mintemp_c2" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label><br>Safety margin as a %:</label>
+                    <input style="width:80%" type="number" class="form-control" name="derate_c2" id="derate_c2" min="0" max="100" value="0"/>
+                </div>
+            </div>
+            <br>
+            <p><b>Curve 3:</b></p>
+            <div class="form-row">
+                <div class="col">
+                    <label>Capacity at -8.3&deg;C (17&deg;F)<br>in kBTU/hr:</label>
+                    <input style="width:80%" type="number" class="form-control" name="heatpumpcap_17_c3" id="heatpumpcap_17_c3" min="0" max="100" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label>Capacity at 8.3&deg;C (47&deg;F)<br>in kBTU/hr:</label>
+                    <input style="width:80%" type="number" class="form-control" name="heatpumpcap_47_c3" id="heatpumpcap_47_c3" min="0" max="100" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label>Minimum operating <br>temperature in &deg;C:</label>
+                    <input style="width:80%" type="number" class="form-control" name="mintemp_c3" id="mintemp_c3" step="0.1" value="0"/>
+                </div>
+                <div class="col">
+                    <label><br>Safety margin as a %:</label>
+                    <input style="width:80%" type="number" class="form-control" name="derate_c3" id="derate_c3" min="0" max="100" value="0"/>
+                </div>
+            </div>
+            <br>
+            <small class="form-text text-muted">
+                Manufacturer data sheets typically provide maximum steady-state heat capacity at -8.3&deg;C and 8.3&deg;C. 
+                It is also possible to find the steady-state capacity data for a given heat pump by using the <a href="https://www.ahridirectory.org/" target="_blank">AHRI Directory</a>. 
+                The safety margin takes into account capacity degradation due to cycling and defrost.
+                It should be 10% or more for variable capacity heat pumps, or 20% or more for single- or two-stage heat pumps.
+                Note that for standard heat pumps often have a minimum operating temperature of -15&deg;C while cold-climate versions can operate down to -25&deg;C or -30&deg;C.
+            </small>
+
+            <div class="btn-container">
+                <button class="button button1" type="submit" style="margin-right:30px;">Calculate</button>
+            </div>
+            <hr class="my-4">
+            {% endblock content %}
+        </div>
+        
+    </div>
+</form>
